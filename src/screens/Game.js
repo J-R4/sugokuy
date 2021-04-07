@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { StyleSheet, Text, View, Button, Dimensions, Alert } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import CountDown from 'react-native-countdown-component';
+import { StackActions } from '@react-navigation/native';
 
 export default function Game(props) {
   const dispatch = useDispatch()
@@ -79,10 +80,12 @@ export default function Game(props) {
       .then(response =>
       {
         if (response.status === 'solved') {
-          props.navigation.navigate('Congrats', {
+          props.navigation.dispatch(
+            StackActions.replace('Congrats', {
             name,
-            difficulty
-          })
+            difficulty,
+            time: time
+          }))
         } else {
           alert('Your answer has some wrong in it !')
         }
@@ -99,9 +102,8 @@ export default function Game(props) {
     })
       .then(response => response.json())
       .then(response =>
-      {
-        return setBoard(response.solution)
-      })
+        setBoard(response.solution)
+      )
       .catch(console.warn)
   }
 
@@ -110,13 +112,25 @@ export default function Game(props) {
       
       <Button
         title='Home'
-        onPress={() => props.navigation.navigate('Home')}/>
-      <Text>Difficulty: {difficulty}</Text>
-      <Text>Time limit : {Math.round(time / 60)} minute</Text>
-      <Text>Good luck, {name}</Text>
+        onPress={() => props.navigation.navigate('Home')} />
+      
+      <View style={{ alignItems: 'center' }}>
+        {
+          Error && <Text style={{color: 'red'}}>{ Error }</Text>
+        }
+        <Text>Difficulty: {difficulty}</Text>
+        <Text>Time limit : {Math.round(time / 60)} minute</Text>
+        <View style={{ flexDirection: 'row'}}>
+          <Text>Good luck, </Text>
+          <Text style={{ fontWeight: 'bold' }}>{name}</Text>
+        </View>
+      </View>
+
       {
-        board.length === 0 ? <Text>{LoadingText}</Text> :
-          <>
+        board.length === 0 ? <Text style={{textAlign: 'center'}}>{LoadingText}</Text> :
+          <View style={{
+            alignItems: 'center'
+          }}>
             <CountDown
               until={time}
               size={20}
@@ -150,14 +164,20 @@ export default function Game(props) {
               )
             })
             }
-          </>
+          </View>
       }
-      <Button
-        title='Submit Answer'
-        onPress={() => submitIt()} />
-      <Button
-        title='Solve it for me'
-        onPress={() => solveIt()}/>
+      <View style={{
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        marginTop: 20
+      }}>
+        <Button
+          title='Submit Answer'
+          onPress={() => submitIt()} />
+        <Button
+          title='Solve it for me'
+            onPress={() => solveIt()} />
+      </View>
     </View>
   )
 }
@@ -165,8 +185,10 @@ export default function Game(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
+    justifyContent: 'space-between',
+    alignItems: 'stretch',
+    paddingVertical: 100,
+    paddingHorizontal: 50
   },
   box: {
     textAlign: 'center',

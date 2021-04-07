@@ -7,6 +7,7 @@ import { StackActions } from '@react-navigation/native';
 
 export default function Game(props) {
   const dispatch = useDispatch()
+  const [oriBoard, setOriBoard] = useState([])
   const [board, setBoard] = useState([])
   const [time, setTime] = useState(0)
   const [done, setDone] = useState(0)
@@ -28,18 +29,22 @@ export default function Game(props) {
     fetch(`https://sugoku.herokuapp.com/board?difficulty=${props.route.params.difficulty}`)
       .then(res => res.json())
       .then(res => {
+        setOriBoard(JSON.parse(JSON.stringify(res.board)))
         // console.log(res,'terbaru <<<<<<<')
         setBoard(res.board)
       })
       .catch((err) => {
         dispatch({type: 'error/set', payload: err})
       })
-    
-    setName(props.route.params.name)
-    setDifficulty(props.route.params.difficulty)
-    
-    dispatch({ type: 'loading/set', payload: 'loading THE GOOD STUFF..' })
-    
+      .finally(() => {
+        console.log(oriBoard,'>>>>>>>>>>>>>')
+      })
+      
+      setName(props.route.params.name)
+      setDifficulty(props.route.params.difficulty)
+      
+      dispatch({ type: 'loading/set', payload: 'loading THE GOOD STUFF..' })
+      
   }, [])
 
   useEffect(() => {
@@ -72,6 +77,7 @@ export default function Game(props) {
 
   const submitIt = () => {
     console.log('validating !')
+    console.log(oriBoard)
     fetch('https://sugoku.herokuapp.com/validate', {
       method: 'POST',
       body: encodeParams({board}),
@@ -151,6 +157,7 @@ export default function Game(props) {
                 <View key={iRow} style={{ flexDirection: 'row' }}>
                   {
                     row.map((col, iCol) => {
+
                       return (
                         <TextInput style={styles.box}
                           key={iCol}
@@ -158,7 +165,7 @@ export default function Game(props) {
                           onChangeText={(text) => inputNum(text, iRow, iCol)}
                           keyboardType="numeric"
                           maxLength={1}
-                          editable={col === 0 ? true : false}
+                          editable={oriBoard[iRow][iCol]===0}
                         />
                       )
                     })  

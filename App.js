@@ -5,7 +5,7 @@ import Game from './src/screens/Game.js'
 import Finish from './src/screens/Finish.js'
 
 import { Provider } from 'react-redux'
-import {store, persistor} from './src/store/index.js'
+import store from './src/store/index.js'
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -29,7 +29,6 @@ export default function App() {
   return (
     <Provider store={store}>
       <PaperProvider theme={theme}>
-        <PersistGate loading={null} persistor={persistor}>
           <NavigationContainer>
             <Stack.Navigator initialRouteName="Home">
                 <Stack.Screen name="Home" component={Home} />
@@ -37,7 +36,6 @@ export default function App() {
                 <Stack.Screen name="Congrats" component={Finish} />
             </Stack.Navigator>
           </NavigationContainer>
-        </PersistGate>
       </PaperProvider>
     </Provider>
   );

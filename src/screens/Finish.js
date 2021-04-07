@@ -11,19 +11,21 @@ export default function Finish({route, navigation}) {
     fetch('https://g.tenor.com/v1/search?winning&key=66YN2LW5JYQL')
       .then(res => res.json())
       .then(res => {
-        console.log(res,'ini dari res')
-        setGif(res.results[Math.floor(Math.random() * (res.results).length - 1)].media.tinygif.url ? res.results[Math.floor(Math.random() * (res.results).length - 1)].media.tinygif.url : 'https://media.tenor.com/images/07b7e39236a37284480cb5bc7f349a8a/tenor.gif')
+        let randomNum = Math.floor(Math.random() * 20)
+        setGif(res.results[randomNum].media[0].mediumgif.url)
       })
   }, [])
 
   return (
     <View style={styles.container}>
-      <Image source={{uri: gif}} />
       <View style={{ alignItems: 'center' ,marginBottom: 20}}>
         <Text>Congrats for finishing the game on {difficulty} difficulty,</Text>
         <Text style={styles.boldText}>{name} :)) </Text>
       </View>
-
+      <Image
+        source={{ uri: gif ? gif : 'https://media.tenor.com/images/17958b861b8c4baa0da99063cc4a5d20/tenor.gif' }}
+        style={{width: 100, height:100, marginBottom: 20 }}
+      />
       <DataTable style={{textAlign: 'center', marginBottom: 20, borderColor: 'green'}}>
         <DataTable.Header>
           <DataTable.Title>Id</DataTable.Title>

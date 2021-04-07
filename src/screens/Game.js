@@ -9,6 +9,7 @@ export default function Game(props) {
   const dispatch = useDispatch()
   const [board, setBoard] = useState([])
   const [time, setTime] = useState(0)
+  const [done, setDone] = useState('')
   const [stillPlay, setStillPlay] = useState(true)
   const [name, setName] = useState('')
   const [difficulty, setDifficulty] = useState('')
@@ -58,7 +59,11 @@ export default function Game(props) {
           break;
       }
     }
-  },[])
+  }, [])
+  
+  useEffect(() => {
+    console.log(done)
+  }, [done])
 
   const inputNum = (num, iRow, iCol) => {
     // console.log(num)
@@ -116,7 +121,7 @@ export default function Game(props) {
       
       <View style={{ alignItems: 'center' }}>
         {
-          Error && <Text style={{color: 'red'}}>{ Error }</Text>
+          ErrorText && <Text style={{color: 'red'}}>{ ErrorText }</Text>
         }
         <Text>Difficulty: {difficulty}</Text>
         <Text>Time limit : {Math.round(time / 60)} minute</Text>

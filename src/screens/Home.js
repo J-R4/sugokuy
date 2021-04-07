@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, TextInput, View, Button, Picker } from 'react-native';
+import { StyleSheet, Text, TextInput, View, Button, Picker, Image } from 'react-native';
 
 export default function Home(props) {
   const [name, setName] = useState('')
@@ -16,13 +16,16 @@ export default function Home(props) {
 
   return (
     <View style={styles.container}>
-      <Text>Welcome to Sugokuy,</Text>
-      <TextInput
-        placeholder='insert your name'
-        onChangeText={setName}
-        value={name}
-      />
-
+      <Image source={{uri:'https://silverandgold.s3-ap-southeast-1.amazonaws.com/SUGOKUY.png'}} style={{width: 200, height: 150}} />
+      <View style={styles.top}>
+        <Text>Welcome to sugoKUY,</Text>
+        <TextInput
+          style={styles.inputText}
+          placeholder='insert your name'
+          onChangeText={setName}
+          value={name}
+          />
+      </View>
       <Text>Pick Difficulty :</Text>
       <Picker
         selectedValue={difficulty}
@@ -36,7 +39,7 @@ export default function Home(props) {
       </Picker>
 
       <Button
-        title='Play Sugokuy'
+        title='Play SUGOKUY'
         onPress={playKuy} />
     </View>
   )
@@ -46,6 +49,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center'
+  },
+  inputText: {
+    borderBottomColor: 'green',
+    borderBottomWidth: 1,
     alignItems: 'center'
   }
 })

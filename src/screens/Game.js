@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, Dimensions, Alert } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import CountDown from 'react-native-countdown-component';
 
@@ -36,7 +36,7 @@ export default function Game(props) {
     setName(props.route.params.name)
     setDifficulty(props.route.params.difficulty)
     
-    dispatch({ type: 'loading/set', payload: 'Sabar kuy lagi loading..' })
+    dispatch({ type: 'loading/set', payload: 'loading THE GOOD STUFF..' })
     
   }, [])
 
@@ -56,9 +56,6 @@ export default function Game(props) {
           setTime(1800)
           break;
       }
-      
-    } else if (time && stillPlay && board.length) {
-      setTime(time - 1)
     }
   },[])
 
@@ -67,26 +64,44 @@ export default function Game(props) {
     // console.log(iRow)
     // console.log(iCol)
     let newBoard = [...board]
-    newBoard[iRow][iCol] = num
+    newBoard[iRow][iCol] = Number(num)
     setBoard(newBoard)
   }
 
   const submitIt = () => {
-    props.navigation.navigate('Congrats', {
-      name,
-      difficulty
-    })
-  }
-
-  const solveIt = () => {
-    console.log('mantap')
-    fetch('https://sugoku.herokuapp.com/solve', {
+    console.log('validating !')
+    fetch('https://sugoku.herokuapp.com/validate', {
       method: 'POST',
-      body: encodeParams(board),
+      body: encodeParams({board}),
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     })
       .then(response => response.json())
-      .then(response => console.log(response, '<< ini jawabannya'))
+      .then(response =>
+      {
+        if (response.status === 'solved') {
+          props.navigation.navigate('Congrats', {
+            name,
+            difficulty
+          })
+        } else {
+          alert('Your answer has some wrong in it !')
+        }
+      })
+      .catch(console.warn)
+  }
+
+  const solveIt = () => {
+    console.log('mantap ketok magic solved !')
+    fetch('https://sugoku.herokuapp.com/solve', {
+      method: 'POST',
+      body: encodeParams({board}),
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    })
+      .then(response => response.json())
+      .then(response =>
+      {
+        return setBoard(response.solution)
+      })
       .catch(console.warn)
   }
 
@@ -105,7 +120,10 @@ export default function Game(props) {
             <CountDown
               until={time}
               size={20}
-              onFinish={() => alert('Finished')}
+              onFinish={() => {
+                alert('Time is up !! You can do it better next time :)')
+                props.navigation.navigate('Home')
+              }}
               digitStyle={{backgroundColor: '#FFF'}}
               digitTxtStyle={{color: '#1CC625'}}
               timeToShow={['M', 'S']}
@@ -120,14 +138,13 @@ export default function Game(props) {
                       return (
                         <TextInput style={styles.box}
                           key={iCol}
-                          value={col === 0 ? '' : `${col}`}
+                          value={col === 0 ? '' : String(col)}
                           onChangeText={(text) => inputNum(text, iRow, iCol)}
                           keyboardType="numeric"
                           maxLength={1}
-                          editable={col !== 0 ? false : true}
                         />
                       )
-                    })
+                    })  
                   }
                 </View>  
               )
@@ -156,6 +173,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 35,
     height: 35,
-    borderWidth: 1
+    borderWidth: 1,
+    borderColor: 'green'
   }
 })

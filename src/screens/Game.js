@@ -9,7 +9,7 @@ export default function Game(props) {
   const dispatch = useDispatch()
   const [board, setBoard] = useState([])
   const [time, setTime] = useState(0)
-  const [done, setDone] = useState('')
+  const [done, setDone] = useState(0)
   const [stillPlay, setStillPlay] = useState(true)
   const [name, setName] = useState('')
   const [difficulty, setDifficulty] = useState('')
@@ -60,10 +60,6 @@ export default function Game(props) {
       }
     }
   }, [])
-  
-  useEffect(() => {
-    console.log(done)
-  }, [done])
 
   const inputNum = (num, iRow, iCol) => {
     // console.log(num)
@@ -89,7 +85,7 @@ export default function Game(props) {
             StackActions.replace('Congrats', {
             name,
             difficulty,
-            time: time
+            done: done
           }))
         } else {
           alert('Your answer has some wrong in it !')
@@ -143,6 +139,7 @@ export default function Game(props) {
                 alert('Time is up !! You can do it better next time :)')
                 props.navigation.navigate('Home')
               }}
+              onChange={() => setDone(done + 1)}
               digitStyle={{backgroundColor: '#FFF'}}
               digitTxtStyle={{color: '#1CC625'}}
               timeToShow={['M', 'S']}
@@ -161,6 +158,7 @@ export default function Game(props) {
                           onChangeText={(text) => inputNum(text, iRow, iCol)}
                           keyboardType="numeric"
                           maxLength={1}
+                          editable={col === 0 ? true : false}
                         />
                       )
                     })  
